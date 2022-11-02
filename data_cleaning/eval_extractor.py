@@ -15,12 +15,10 @@ class EvalExtractor():
         print("-------------------\nEVAL EXTRACTOR\n-------------------\nClearing previous games.\nReading PGN...")
         self.evals = {}
 
-        with open(filename, 'r', encoding='utf-8') as file:
-            content = file.read()
-
-            # ISOLATE ALL GAMES
-            games = re.findall("(\n1. .*\n(\d.*\n){1,200})", content)
-
+        def find_evals(games):
+            '''
+            Take as input list of PGN games.
+            '''
             # CREATE LIST OF EVALS FOR EACH GAME
             game_counter = 1
             for game in games:
@@ -34,5 +32,17 @@ class EvalExtractor():
                 # ADD EVALS
                 self.evals[f'game_{game_counter}'] = evals
                 game_counter += 1
+
+        # OPEN PGN AND READ CONTENTS
+        with open(filename, 'r', encoding='utf-8') as file:
+            content = file.read()
+            # ISOLATE ALL GAMES
+            games = re.findall("(\n1. .*\n(\d.*\n){1,200})", content)
+
+        # EXTRACT EVALS
+        if games_to_read == None:
+            find_evals(games)
+        else:
+            find_evals(games[:games_to_read])
 
         print(f"Added {len(self.evals)} games.\n")

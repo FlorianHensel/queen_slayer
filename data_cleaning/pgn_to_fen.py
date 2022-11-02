@@ -103,7 +103,6 @@ class PGNConverter():
                     games_available = convert_game_to_fens(pgn, game_counter)
                     game_counter += 1
 
-
             # IF VALUE IS GIVEN FOR GAMES TO READ, READ N GAMES
             else:
                 for game_number in range (1, games_to_read + 1):

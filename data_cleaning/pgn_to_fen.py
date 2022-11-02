@@ -33,6 +33,12 @@ class PGNConverter():
             self.games[current_game] = []
 
             for move in game.mainline_moves():
+                # DETERMINE SIDE TO PLAY
+                if board.turn == True:
+                    side_to_play = '1'
+                else:
+                    side_to_play = '0'
+
                 board.push(move)
 
                 # FEN AS BINARY
@@ -81,6 +87,7 @@ class PGNConverter():
 
                     board_list = board_str.split(' ')
                     fen = [float(i) for i in board_list]
+                    fen.append(side_to_play)
 
                 self.games[current_game].append(fen)
 

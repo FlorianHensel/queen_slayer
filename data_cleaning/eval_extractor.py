@@ -13,15 +13,26 @@ class EvalExtractor():
         '''
 
         print("-------------------\nEVAL EXTRACTOR\n-------------------\nClearing previous games.\nReading PGN...")
-
         self.evals = {}
 
         with open(filename, 'r', encoding='utf-8') as file:
             content = file.read()
-            # games = re.findall("(\n\d{1,2}. .*}){1,2000}", content)
-            # print(games)
-            search_result = re.findall("(\W\w{4} (|-)\d{1,2}.\d{1,2})", content)
-            evals = [float(re.findall("((-|)\d{1,2}.\d{1,2})", i[0])[0][0]) for i in search_result if 'eval' in i[0]]
-            self.evals = evals
 
-        print(f"Done.\n")
+            # ISOLATE ALL GAMES
+            games = re.findall("(\n1. .*\n(\d.*\n){1,200})", content)
+
+            # CREATE LIST OF EVALS FOR EACH GAME
+            game_counter = 1
+            for game in games:
+
+                # ISOLATE EVALS
+                search_result = re.findall("(\W\w{4} (|-)\d{1,2}.\d{1,2})", game[0])
+
+                # CONVERT EVALS TO FLOAT
+                evals = [float(re.findall("((-|)\d{1,2}.\d{1,2})", i[0])[0][0]) for i in search_result if 'eval' in i[0]]
+
+                # ADD EVALS
+                self.evals[f'game_{game_counter}'] = evals
+                game_counter += 1
+
+        print(f"Added {len(self.evals)} games.\n")

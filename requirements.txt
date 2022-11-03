@@ -16,6 +16,9 @@ flake8
 pytest
 yapf
 
+# Chess package
+chess
+
 # API
 gcsfs
 google-cloud-storage

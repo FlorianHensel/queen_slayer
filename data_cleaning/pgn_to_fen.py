@@ -19,7 +19,20 @@ class PGNConverter():
         print("-------------------\nPGN CONVERTER\n-------------------\nClearing previous games.\nReading PGN...")
         self.games = {}
 
+
+        def queen_capture_move():
+            '''
+            Function to identify a queen capture move.
+            Returns True and False.
+            '''
+            pass
+
+
+
         def convert_game_to_fens(pgn, game_number, encoding=encoding):
+            '''
+            Converts games in PGN file into FENs.
+            '''
             game = chess.pgn.read_game(pgn)
             try:
                 board = game.board()

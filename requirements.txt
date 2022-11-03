@@ -30,3 +30,4 @@ termcolor
 
 # Chess Package
 chess
+regex

@@ -19,6 +19,9 @@ yapf
 # Chess package
 chess
 
+#regex
+regex
+
 # API
 gcsfs
 google-cloud-storage

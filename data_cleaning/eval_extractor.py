@@ -8,7 +8,7 @@ class EvalExtractor():
     def read_pgn(self, filename=str, games_to_read=None):
         '''
         Reads pgn file and creates EVAL% for each position in a game.\n
-        Stored in self.games
+        Stored in self.games\n
         Each run will reset prior games.
         '''
 

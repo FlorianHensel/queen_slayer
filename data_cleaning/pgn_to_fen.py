@@ -8,12 +8,14 @@ class PGNConverter():
         self.games = {}
 
 
-    def read_pgn(self, filename=str, games_to_read=None, encoding=str):
+    def read_pgn(self, filename=str, games_to_read=None, encoding=str, qcm_to_flag=1):
         '''
         Reads pgn file and creates FENs for each position in a game.\n
         Stored in self.games
-        Each run will reset prior games.
-        Encodings: string, binary, square_list
+        Each run will reset prior games.\n
+        Encodings: string, binary, square_list.\n
+        qcm_to_flag: Number of positions previous to queen capture position
+        that need to be flagged.
         '''
 
         print("-------------------\nPGN CONVERTER\n-------------------\nClearing previous games.\nReading PGN...")
@@ -33,13 +35,13 @@ class PGNConverter():
             if 'q' in fens[0]:
                 # CHECK IF BLACK QUEEN EXISTS AFTER MOVE
                 if 'q' not in fens[1]:
-                    queen_capture_move = 1
+                    queen_capture_move = True
 
             # CHECK IF WIHTE QUEEN EXISTS IN PRIOR POSITION
             if 'Q' in fens[0]:
                 # CHECK IF WHITE QUEEN EXISTS AFTER MOVE
                 if 'Q' not in fens[1]:
-                    queen_capture_move = -1
+                    queen_capture_move = True
 
             return queen_capture_move
 
@@ -134,9 +136,19 @@ class PGNConverter():
                 fen.insert(0, side_to_play)
                 fens.append(fen)
 
-                # LABEL PREVIOUS FEN WITH QUEEN CAPTURE POSSIBILITY
+                # FLAG FEN IF QUEEN CAPTURED
                 if fen_counter > 0:
                     fens[fen_counter - 1].insert(0, queen_capture_move)
+
+                # FLAG PREVIOUS FEN WITH QUEEN CAPTURE POSSIBILITY
+                if queen_capture_move:
+                    # FLAG EVERY SECOND POSITION
+                    for i in range(2, qcm_to_flag * 2 + 2, 2):
+                        try:
+                            fens[fen_counter - i - 1][0] = -i / 2
+                        except KeyError:
+                            pass
+
                 fen_counter += 1
 
             # LABEL THE LAST GAME POSITION WITH QUEEN CAPTURE POSSIBILITY

@@ -44,8 +44,8 @@ class FEN_Eval_Matcher():
 
     def create_dataset(self, dropna=True, drop_duplicates=True):
         '''
-        Returns Pandas DataFrame from matched data.
-        Dropna to return df excluding games with no evals.
+        Returns Pandas DataFrame from matched data.\n
+        Dropna to return df excluding games with no evals.\n
         Drop duplicates for unique positions.
         '''
 
@@ -68,10 +68,11 @@ class FEN_Eval_Matcher():
         return df
 
 
-    def amplify_queen_capture_positions(self, amplifier=float, amplifier_type=str):
+    def amplify_queen_capture_positions(self, amplifier=float, amplifier_type=str, keep_qcm=False):
         '''
-        Imbalances dataset for queen capture positions.
-        Amplifier types: addition, multiplication
+        Imbalances dataset for queen capture positions.\n
+        Amplifier types: addition, multiplication.\n
+        Set Keep queen capture moves (keep_qcm) to true to keep labeling in df.
         '''
 
         if amplifier_type == 'addition':
@@ -89,6 +90,9 @@ class FEN_Eval_Matcher():
                                                       amplifier * x['side_to_play']
                                                       if x['QCM'] is True
                                                       else x['eval'], axis=1)
+
+        if keep_qcm == False:
+            amplified_df.drop(columns=['QCM'], inplace=True)
 
         self.dataset = amplified_df
         return amplified_df

@@ -42,14 +42,53 @@ class FEN_Eval_Matcher():
         print(f"Done.\n")
 
 
-    def create_dataset(self):
+    def create_dataset(self, dropna=True, drop_duplicates=True):
         '''
         Returns Pandas DataFrame from matched data.
-        Excludes games without evals.
+        Dropna to return df excluding games with no evals.
+        Drop duplicates for unique positions.
         '''
+
+        # GET NUMBER OF FEATURES BASED ON FEN ENCODING
         feature_count = max([len(i) for i in self.evaluated_positions])
-        columns = [f"feat_{i}" for i in range(1, feature_count)]
+        columns = [f"feat_{i}" for i in range(1, feature_count - 2)]
+
+        # QUEEN CAPTURE MOVES ALWAYS RECORDED IN FIRST COLUMN
+        columns.insert(0, 'QCM')
+        # SIDE TO PLAY ALWAYS RECORDED IN SECOND COLUMN
+        columns.insert(1, 'side_to_play')
+        # EVALS ALWAYS RECORDED ON LAST COLUMN
         columns.append('eval')
+
         df = pd.DataFrame(self.evaluated_positions, columns=columns)
-        df.dropna(inplace=True)
+        df.dropna(inplace=dropna)
+        df.drop_duplicates(inplace=drop_duplicates)
+
+        self.dataset = df
         return df
+
+
+    def amplify_queen_capture_positions(self, amplifier=float, amplifier_type=str):
+        '''
+        Imbalances dataset for queen capture positions.
+        Amplifier types: addition, multiplication
+        '''
+
+        if amplifier_type == 'addition':
+            amplified_df = self.dataset
+            # IF POSITION IS QCP, AMPLIFY EVAL
+            amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] +
+                                                      amplifier * x['side_to_play']
+                                                      if x['QCM'] is True
+                                                      else x['eval'], axis=1)
+
+        if amplifier_type == 'multiplication':
+            amplified_df = self.dataset
+            # IF POSITION IS QCP, AMPLIFY EVAL
+            amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] *
+                                                      amplifier * x['side_to_play']
+                                                      if x['QCM'] is True
+                                                      else x['eval'], axis=1)
+
+        self.dataset = amplified_df
+        return amplified_df

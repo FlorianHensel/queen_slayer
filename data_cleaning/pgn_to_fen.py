@@ -20,13 +20,82 @@ class PGNConverter():
         self.games = {}
 
 
-        def queen_capture_move():
+        def is_queen_capture_move(fens):
             '''
             Function to identify a queen capture move.
+            Takes as input a list of two FENs.
             Returns True and False.
             '''
-            pass
 
+            queen_capture_move = False
+
+            # CHECK IF BLACK QUEEN EXISTS IN PRIOR POSITION
+            if 'q' in fens[0]:
+                # CHECK IF BLACK QUEEN EXISTS AFTER MOVE
+                if 'q' not in fens[1]:
+                    queen_capture_move = 1
+
+            # CHECK IF WIHTE QUEEN EXISTS IN PRIOR POSITION
+            if 'Q' in fens[0]:
+                # CHECK IF WHITE QUEEN EXISTS AFTER MOVE
+                if 'Q' not in fens[1]:
+                    queen_capture_move = -1
+
+            return queen_capture_move
+
+
+        def encode_fen(board, encoding=str):
+            '''
+            Returns encoded FEN
+            '''
+            # FEN AS BINARY
+            if encoding == 'binary':
+                fen_str = ''.join(format(ord(x), 'b') for x in board.fen())
+                fen = [i for i in fen_str]
+
+            # FEN AS STRING
+            elif encoding == 'string':
+                fen_str = board.fen()
+                fen = [i for i in fen_str]
+
+            # FEN AS SQUARE LIST
+            elif encoding == 'square_list':
+                board_str = str(board)
+
+                # ENCODE EMPTY FIELDS
+                board_str = board_str.replace('.', '0')
+
+                # ENCODE ROOKS
+                board_str = board_str.replace('r', '-5')
+                board_str = board_str.replace('R', '5')
+
+                # ENCODE PAWNS
+                board_str = board_str.replace('p', '-1')
+                board_str = board_str.replace('P', '1')
+
+                # ENCODE KNIGHTS
+                board_str = board_str.replace('n', '-2.9')
+                board_str = board_str.replace('N', '2.9')
+
+                # ENCODE BISHOPS
+                board_str = board_str.replace('b', '-3')
+                board_str = board_str.replace('B', '3')
+
+                # ENCODE QUEENS
+                board_str = board_str.replace('q', '-9')
+                board_str = board_str.replace('Q', '9')
+
+                # ENCODE KINGS
+                board_str = board_str.replace('k', '-1.5')
+                board_str = board_str.replace('K', '1.5')
+
+                # REMOVE LINEBREAKS
+                board_str = board_str.replace('\n', ' ')
+
+                board_list = board_str.split(' ')
+                fen = [float(i) for i in board_list]
+
+            return fen
 
 
         def convert_game_to_fens(pgn, game_number, encoding=encoding):
@@ -43,69 +112,41 @@ class PGNConverter():
 
             # PLAY THROUGH EACH GAME AND SAVE MOVES AS FEN
             current_game = f'game_{str(game_number)}'
-            self.games[current_game] = []
+            fens = []
+            fen_counter = 0
 
             for move in game.mainline_moves():
+
+                # DETERMINE QUEEN CAPTURE MOVE & MAKE MOVE
+                fen_before = board.fen()
+                board.push(move)
+                fen_after = board.fen()
+                queen_capture_move = is_queen_capture_move([fen_before, fen_after])
+
                 # DETERMINE SIDE TO PLAY
                 if board.turn == True:
-                    side_to_play = '1'
+                    side_to_play = 1
                 else:
-                    side_to_play = '0'
+                    side_to_play = -1
 
-                board.push(move)
+                # ENCODE FEN AND ADD SIDE TO PLAY
+                fen = encode_fen(board=board, encoding=encoding)
+                fen.insert(0, side_to_play)
+                fens.append(fen)
 
-                # FEN AS BINARY
-                if encoding == 'binary':
-                    fen_str = ''.join(format(ord(x), 'b') for x in board.fen())
-                    fen = [i for i in fen_str]
+                # LABEL PREVIOUS FEN WITH QUEEN CAPTURE POSSIBILITY
+                if fen_counter > 0:
+                    fens[fen_counter - 1].insert(0, queen_capture_move)
+                fen_counter += 1
 
-                # FEN AS STRING
-                elif encoding == 'string':
-                    fen_str = board.fen()
-                    fen = [i for i in fen_str]
+            # LABEL THE LAST GAME POSITION WITH QUEEN CAPTURE POSSIBILITY
+            fens[-1].insert(0, False)
 
-                # FEN AS SQUARE LIST
-                elif encoding == 'square_list':
-                    board_str = str(board)
-
-                    # ENCODE EMPTY FIELDS
-                    board_str = board_str.replace('.', '0')
-
-                    # ENCODE ROOKS
-                    board_str = board_str.replace('r', '-5')
-                    board_str = board_str.replace('R', '5')
-
-                    # ENCODE PAWNS
-                    board_str = board_str.replace('p', '-1')
-                    board_str = board_str.replace('P', '1')
-
-                    # ENCODE KNIGHTS
-                    board_str = board_str.replace('n', '-2.9')
-                    board_str = board_str.replace('N', '2.9')
-
-                    # ENCODE BISHOPS
-                    board_str = board_str.replace('b', '-3')
-                    board_str = board_str.replace('B', '3')
-
-                    # ENCODE QUEENS
-                    board_str = board_str.replace('q', '-9')
-                    board_str = board_str.replace('Q', '9')
-
-                    # ENCODE KINGS
-                    board_str = board_str.replace('k', '-1.5')
-                    board_str = board_str.replace('K', '1.5')
-
-                    # REMOVE LINEBREAKS
-                    board_str = board_str.replace('\n', ' ')
-
-                    board_list = board_str.split(' ')
-                    fen = [float(i) for i in board_list]
-                    fen.append(side_to_play)
-
-                self.games[current_game].append(fen)
+            self.games[current_game] = fens
 
             # RETURN TRUE IF GAME AVAILABLE
             return True
+
 
         with open(filename) as pgn:
             # IF NO VALUE IS GIVEN FOR GAMES TO READ, READ ALL GAMES

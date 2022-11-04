@@ -14,20 +14,23 @@ converter.read_pgn(filepath,
 
 # GET EVALUATIONS
 eval_extractor = EvalExtractor()
-eval_extractor.read_pgn(filepath,
-                        games_to_read=GAMES_TO_READ)
+eval_extractor.read_pgn(filepath, games_to_read=GAMES_TO_READ)
 
 # MATCH EVALS TO FENS
-dataset_creator = DatasetCreator(fens=converter.games,
-                                    evals=eval_extractor.evals)
+dataset_creator = DatasetCreator(fens=converter.games, evals=eval_extractor.evals)
 dataset_creator.match_fen_to_eval()
 
 # CREATE DATASET
-dataset_creator.create_dataset(dropna=False,
-                                drop_duplicates=False)
+dataset_creator.create_dataset(dropna=False, drop_duplicates=False)
 
 # EMPOWER QUEEN CAPTURE POSITIONS
-df = dataset_creator.amplify_queen_capture_positions(amplifier=10,
-                                                      amplifier_type='addition',
-                                                      keep_qcm=True)
+amplifiers = {
+    'main': 10,
+    '-1': 5,
+    '-2': 3,
+    '-3': 1.5
+}
+df = dataset_creator.amplify_queen_capture_positions(amplifiers=amplifiers,
+                                                     amplifier_type='addition',
+                                                     keep_qcm=False)
 df.to_csv('train_data.csv', index=False)

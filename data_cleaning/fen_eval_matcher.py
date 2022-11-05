@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-class FEN_Eval_Matcher():
+class DatasetCreator():
     '''
     Takes list of fens and list of evals to return a combined dataset.
     '''
@@ -42,14 +42,82 @@ class FEN_Eval_Matcher():
         print(f"Done.\n")
 
 
-    def create_dataset(self):
+    def create_dataset(self, dropna=True, drop_duplicates=True):
         '''
-        Returns Pandas DataFrame from matched data.
-        Excludes games without evals.
+        Returns Pandas DataFrame from matched data.\n
+        Dropna to return df excluding games with no evals.\n
+        Drop duplicates for unique positions.
         '''
+
+        # GET NUMBER OF FEATURES BASED ON FEN ENCODING
         feature_count = max([len(i) for i in self.evaluated_positions])
-        columns = [f"feat_{i}" for i in range(1, feature_count)]
+        columns = [f"feat_{i}" for i in range(1, feature_count - 2)]
+
+        # QUEEN CAPTURE MOVES ALWAYS RECORDED IN FIRST COLUMN
+        columns.insert(0, 'QCM')
+        # SIDE TO PLAY ALWAYS RECORDED IN SECOND COLUMN
+        columns.insert(1, 'side_to_play')
+        # EVALS ALWAYS RECORDED ON LAST COLUMN
         columns.append('eval')
+
         df = pd.DataFrame(self.evaluated_positions, columns=columns)
-        df.dropna(inplace=True)
+        df.dropna(inplace=dropna)
+        df.drop_duplicates(inplace=drop_duplicates)
+
+        self.dataset = df
         return df
+
+
+    def amplify_queen_capture_positions(self, amplifiers, amplifier_type=str, keep_qcm=False):
+        '''
+        Imbalances dataset for queen capture positions.\n
+        Amplifier types: addition, multiplication.\n
+        Set Keep queen capture moves (keep_qcm) to true to keep labeling in df.
+        '''
+
+        if amplifier_type == 'addition':
+            amplified_df = self.dataset
+            # IF POSITION IS QCP, AMPLIFY EVAL
+            amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] +
+                                                      amplifiers['main'] *
+                                                      x['side_to_play']
+                                                      if x['QCM'] is True
+                                                      else x['eval'], axis=1)
+
+        if amplifier_type == 'multiplication':
+            amplified_df = self.dataset
+            # IF POSITION IS QCP, AMPLIFY EVAL
+            amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] *
+                                                      amplifiers['main'] *
+                                                      x['side_to_play']
+                                                      if x['QCM'] is True
+                                                      else x['eval'], axis=1)
+
+        # AMPLIFY INDIRECT QUEEN CAPTURE POSITIONS
+        secondary_amplifiers = [i for i in amplifiers.keys()][1:]
+        for amplifier in secondary_amplifiers:
+            if amplifier_type == 'addition':
+                amplified_df = self.dataset
+                # IF POSITION IS QCP, AMPLIFY EVAL
+                amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] +
+                                                        amplifiers[amplifier] *
+                                                        x['side_to_play']
+                                                        if int(x['QCM']) is int(amplifier)
+                                                        else x['eval'], axis=1)
+
+            if amplifier_type == 'multiplication':
+                amplified_df = self.dataset
+                # IF POSITION IS QCP, AMPLIFY EVAL
+                amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] *
+                                                        amplifiers[amplifier] *
+                                                        x['side_to_play']
+                                                        if int(x['QCM']) is int(amplifier)
+                                                        else x['eval'], axis=1)
+
+
+
+        if keep_qcm == False:
+            amplified_df.drop(columns=['QCM'], inplace=True)
+
+        self.dataset = amplified_df
+        return amplified_df

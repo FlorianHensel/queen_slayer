@@ -83,6 +83,26 @@
 [TimeControl "300+0"]
 [Termination "Time forfeit"]
 
-1. e4 { [] [%clk 0:00:30] } c5 { [] [%clk 0:00:30] }
-2. Nf3 { [] [%clk 0:00:29] } 2... Nc6 { [] [%clk 0:00:30] }
-3. Bc4 { [] [%clk 0:00:28] } 3... e6 { [] [%clk 0:00:30] } 0-1
+1. e4 { [%eval 0.17] [%clk 0:00:30] } c5 { [%eval 0.17] [%clk 0:00:30] }
+2. Nf3 { [%eval 0.17] [%clk 0:00:29] } 2... Nc6 { [%eval 0.17] [%clk 0:00:30] }
+3. Bc4 { [%eval 0.17] [%clk 0:00:28] } 3... e6 { [%eval 0.17] [%clk 0:00:30] } 0-1
+
+[Event "Vs. Computer"]
+[Site "Chess.com"]
+[Date "2022-11-04"]
+[White "Isla"]
+[Black "SpatenSee184"]
+[Result "1-0"]
+[Termination "Isla won by checkmate"]
+
+1. e4 { [%eval 0.17] [%clk 0:00:30] } c5 { [%eval 0.17] [%clk 0:00:30] }
+2. Nf3 { [%eval 0.17] [%clk 0:00:30] } Qa5 { [%eval 0.17] [%clk 0:00:30] }
+3. Nc3 { [%eval 0.17] [%clk 0:00:30] } Qxc3 { [%eval 0.17] [%clk 0:00:30] }
+4. dxc3 Kd8 
+5. Qd5 { [%eval 0.17] [%clk 0:00:30] } Kc7 { [%eval 0.17] [%clk 0:00:30] } 
+6. Qxc5+ { [%eval 0.17] [%clk 0:00:30] } Nc6 { [%eval 0.17] [%clk 0:00:30] }
+7. Be3 { [%eval 0.17] [%clk 0:00:30] } b6 { [%eval 0.17] [%clk 0:00:30] }
+8. Qf5 { [%eval 0.17] [%clk 0:00:30] } Kd6 { [%eval 0.17] [%clk 0:00:30] }
+9. Qxf7 { [%eval 0.17] [%clk 0:00:30] } Rb8 { [%eval 0.17] [%clk 0:00:30] }
+10. Qf4+ { [%eval 0.17] [%clk 0:00:30] } Ke6 { [%eval 0.17] [%clk 0:00:30] }
+11. Ng5# { [%eval 0.17] [%clk 0:00:30] } 1-0

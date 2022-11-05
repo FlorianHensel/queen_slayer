@@ -94,7 +94,7 @@ class DatasetCreator():
                                                       else x['eval'], axis=1)
 
         # AMPLIFY INDIRECT QUEEN CAPTURE POSITIONS
-        secondary_amplifiers = [i for i in amplifiers.keys()][1:]
+        secondary_amplifiers = [i for i in amplifiers.keys() if i != 'main']
         for amplifier in secondary_amplifiers:
             if amplifier_type == 'addition':
                 amplified_df = self.dataset
@@ -114,10 +114,17 @@ class DatasetCreator():
                                                         if int(x['QCM']) is int(amplifier)
                                                         else x['eval'], axis=1)
 
-
-
         if keep_qcm == False:
             amplified_df.drop(columns=['QCM'], inplace=True)
+
+        # CAP EVALUATIONS BETWEEN -15 and +15
+        # amplified_df['eval'] = amplified_df.apply(lambda x: -15
+        #                                           if x['eval'] < -15
+        #                                           else x['eval'])
+
+        # amplified_df['eval'] = amplified_df.apply(lambda x: 15
+        #                                           if x['eval'] > 15
+        #                                           else x['eval'])
 
         self.dataset = amplified_df
         return amplified_df

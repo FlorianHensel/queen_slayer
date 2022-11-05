@@ -1,4 +1,5 @@
 import chess.pgn
+import datetime as dt
 
 class PGNConverter():
     '''
@@ -168,6 +169,12 @@ class PGNConverter():
                 while games_available:
                     games_available = convert_game_to_fens(pgn, game_counter)
                     game_counter += 1
+
+                    if game_counter == 1000:
+                        now = dt.datetime.now().strftime("%H:%M:%S")
+                        print(f'{now}: processed 1000 games...')
+                        game_counter = 0
+
 
             # IF VALUE IS GIVEN FOR GAMES TO READ, READ N GAMES
             else:

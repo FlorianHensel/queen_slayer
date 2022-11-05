@@ -2,6 +2,8 @@ from eval_extractor import EvalExtractor
 from pgn_to_fen import PGNConverter
 from fen_eval_matcher import DatasetCreator
 
+######## VERSION 1.0 ########
+
 GAMES_TO_READ = 100
 filepath = 'lichess_db_standard_rated_2013-01.pgn'
 

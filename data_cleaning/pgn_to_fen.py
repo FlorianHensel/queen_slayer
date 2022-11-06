@@ -23,7 +23,7 @@ class PGNConverter():
         that need to be flagged.
         '''
 
-        print("-------------------\nPGN CONVERTER\n-------------------\nClearing previous games.\nReading PGN...")
+        print("-------------------\nPGN CONVERTER\n-------------------\nClearing previous games.")
         self.games = {}
 
 
@@ -168,6 +168,8 @@ class PGNConverter():
         with open(filename) as pgn:
             # IF NO VALUE IS GIVEN FOR GAMES TO READ, READ ALL GAMES
             if games_to_read == None:
+                if log:
+                    print('Reading all games...')
                 game_counter = 1
                 games_available = True
                 while games_available:
@@ -175,13 +177,15 @@ class PGNConverter():
                     game_counter += 1
 
                     if log:
-                        if game_counter == 1000:
+                        if game_counter % 1000 == 0:
                             now = dt.datetime.now().strftime("%H:%M:%S")
-                            print(f'{now}: processed 1000 games...')
+                            print(f'{now} | processed {game_counter} games...')
 
 
             # IF VALUE IS GIVEN FOR GAMES TO READ, READ N GAMES
             else:
+                if log:
+                    print(f'Reading {games_to_read} games...')
                 game_counter = 1
 
                 for game_number in range (1, games_to_read + 1):
@@ -190,8 +194,8 @@ class PGNConverter():
 
                     # LOG EVERY THOUSAND GAMES
                     if log:
-                        if game_counter == 1000:
+                        if game_counter % 1000 == 0:
                             now = dt.datetime.now().strftime("%H:%M:%S")
-                            print(f'{now}: processed 1000 games...')
+                            print(f'{now} | processed {game_counter} games...')
 
         print(f"Added {len(self.games)} games.\n")

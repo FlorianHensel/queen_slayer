@@ -9,7 +9,11 @@ class PGNConverter():
         self.games = {}
 
 
-    def read_pgn(self, filename=str, games_to_read=None, encoding=str, qcm_to_flag=1):
+    def read_pgn(self, filename=str,
+                 games_to_read=None,
+                 encoding=str,
+                 qcm_to_flag=1,
+                 log=True):
         '''
         Reads pgn file and creates FENs for each position in a game.\n
         Stored in self.games
@@ -170,15 +174,24 @@ class PGNConverter():
                     games_available = convert_game_to_fens(pgn, game_counter)
                     game_counter += 1
 
-                    if game_counter == 1000:
-                        now = dt.datetime.now().strftime("%H:%M:%S")
-                        print(f'{now}: processed 1000 games...')
-                        game_counter = 0
+                    if log:
+                        if game_counter == 1000:
+                            now = dt.datetime.now().strftime("%H:%M:%S")
+                            print(f'{now}: processed 1000 games...')
 
 
             # IF VALUE IS GIVEN FOR GAMES TO READ, READ N GAMES
             else:
+                game_counter = 1
+
                 for game_number in range (1, games_to_read + 1):
                     convert_game_to_fens(pgn, game_number)
+                    game_counter += 1
+
+                    # LOG EVERY THOUSAND GAMES
+                    if log:
+                        if game_counter == 1000:
+                            now = dt.datetime.now().strftime("%H:%M:%S")
+                            print(f'{now}: processed 1000 games...')
 
         print(f"Added {len(self.games)} games.\n")

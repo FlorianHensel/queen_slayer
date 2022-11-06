@@ -23,11 +23,26 @@ class EvalExtractor():
             game_counter = 1
             for game in games:
 
-                # ISOLATE EVALS
+                # ISOLATE EVAL STRINGS
                 evals_string = [i[0] for i in re.findall("(%\w{4} (|#-|-|#)\d{1,2}.(\d{1,2}|))", game)]
-                # CONVERT EVALS TO FLOAT
-                evals = [float(re.findall("((-|)\d{1,2}(.\d{1,2}|))", i)[0][0]) for i in evals_string if 'eval' in i]
-                # ADD EVALS
+
+                # ISOLATE EVAL (INCLUDING HASH NOTATION FOR FORCED CHECKMATE)
+                evals_hash = [re.findall("((#|#-|-|)\d{1,2}(.\d{1,2}|))", i)[0][0]
+                              for i in evals_string if 'eval' in i]
+
+                # ADJUST EVALS FOR CHECKMATE POSITIONS:
+                evals = []
+                for eval in evals_hash:
+                    # CHECKMATE POSSIBILITY FOR BLACK
+                    if '#-' in eval:
+                        evals.append(-15)
+                    # CHECKMATE POSSIBILITY FOR WHITE
+                    elif '#' in eval:
+                        evals.append(15)
+                    else:
+                        evals.append(float(eval))
+
+                # ADD EVALS TO SELF
                 self.evals[f'game_{game_counter}'] = evals
                 game_counter += 1
 

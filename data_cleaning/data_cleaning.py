@@ -2,9 +2,10 @@ from eval_extractor import EvalExtractor
 from pgn_to_fen import PGNConverter
 from fen_eval_matcher import DatasetCreator
 
-######## VERSION 1.0 ########
+######## VERSION 2.0 ########
 
-GAMES_TO_READ = 100
+# TAKES AROUND 10 SECONDS PER 1000 GAMES
+GAMES_TO_READ = 1000
 filepath = 'lichess_db_standard_rated_2013-01.pgn'
 
 # CREATE FENS FROM GAMES
@@ -12,7 +13,8 @@ converter = PGNConverter()
 converter.read_pgn(filepath,
                    encoding='square_list',
                    games_to_read=GAMES_TO_READ,
-                   qcm_to_flag=3)
+                   qcm_to_flag=3,
+                   log=True)
 
 # GET EVALUATIONS
 eval_extractor = EvalExtractor()
@@ -34,5 +36,6 @@ amplifiers = {
 }
 df = dataset_creator.amplify_queen_capture_positions(amplifiers=amplifiers,
                                                      amplifier_type='addition',
-                                                     keep_qcm=True)
+                                                     keep_qcm=True,
+                                                     evals_cap=[-15, 15])
 df.to_csv('train_data.csv', index=False)

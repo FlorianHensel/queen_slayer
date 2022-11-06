@@ -42,7 +42,7 @@ class DatasetCreator():
         print(f"Done.\n")
 
 
-    def create_dataset(self, dropna=True, drop_duplicates=True):
+    def create_dataset(self, dropna=True, drop_duplicates=True) -> pd.DataFrame:
         '''
         Returns Pandas DataFrame from matched data.\n
         Dropna to return df excluding games with no evals.\n
@@ -68,29 +68,36 @@ class DatasetCreator():
         return df
 
 
-    def amplify_queen_capture_positions(self, amplifiers, amplifier_type=str, keep_qcm=False):
+    def amplify_queen_capture_positions(self,
+                                        amplifiers,
+                                        amplifier_type=str,
+                                        keep_qcm=False,
+                                        evals_cap=[-15, 15]) -> pd.DataFrame:
         '''
         Imbalances dataset for queen capture positions.\n
         Amplifier types: addition, multiplication.\n
-        Set Keep queen capture moves (keep_qcm) to true to keep labeling in df.
+        Set Keep queen capture moves (keep_qcm)
+        to true to keep labeling in df.\n
         '''
 
         if amplifier_type == 'addition':
             amplified_df = self.dataset
-            # IF POSITION IS QCP, AMPLIFY EVAL
+            # IF POSITION IS QCP AND NOT CHECKMATE, AMPLIFY EVAL
             amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] +
                                                       amplifiers['main'] *
                                                       x['side_to_play']
                                                       if x['QCM'] is True
+                                                      and x['eval'] is float
                                                       else x['eval'], axis=1)
 
         if amplifier_type == 'multiplication':
             amplified_df = self.dataset
-            # IF POSITION IS QCP, AMPLIFY EVAL
+            # IF POSITION IS QCP AND NOT CHECKMATE, AMPLIFY EVAL
             amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] *
                                                       amplifiers['main'] *
                                                       x['side_to_play']
                                                       if x['QCM'] is True
+                                                      and x['eval'] is float
                                                       else x['eval'], axis=1)
 
         # AMPLIFY INDIRECT QUEEN CAPTURE POSITIONS
@@ -98,33 +105,33 @@ class DatasetCreator():
         for amplifier in secondary_amplifiers:
             if amplifier_type == 'addition':
                 amplified_df = self.dataset
-                # IF POSITION IS QCP, AMPLIFY EVAL
+                # IF POSITION IS QCP AND NOT CHECKMATE, AMPLIFY EVAL
                 amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] +
                                                         amplifiers[amplifier] *
                                                         x['side_to_play']
                                                         if int(x['QCM']) is int(amplifier)
+                                                        and x['eval'] is float
                                                         else x['eval'], axis=1)
 
             if amplifier_type == 'multiplication':
                 amplified_df = self.dataset
-                # IF POSITION IS QCP, AMPLIFY EVAL
+                # IF POSITION IS QCP AND NOT CHECKMATE, AMPLIFY EVAL
                 amplified_df['eval'] = amplified_df.apply(lambda x: x['eval'] *
                                                         amplifiers[amplifier] *
                                                         x['side_to_play']
                                                         if int(x['QCM']) is int(amplifier)
+                                                        and x['eval'] is float
                                                         else x['eval'], axis=1)
 
         if keep_qcm == False:
             amplified_df.drop(columns=['QCM'], inplace=True)
 
         # CAP EVALUATIONS BETWEEN -15 and +15
-        # amplified_df['eval'] = amplified_df.apply(lambda x: -15
-        #                                           if x['eval'] < -15
-        #                                           else x['eval'])
+        low = evals_cap[0]
+        high = evals_cap[1]
 
-        # amplified_df['eval'] = amplified_df.apply(lambda x: 15
-        #                                           if x['eval'] > 15
-        #                                           else x['eval'])
+        amplified_df['eval'].where(amplified_df['eval'] < low, low)
+        amplified_df['eval'].where(amplified_df['eval'] > high, high)
 
         self.dataset = amplified_df
         return amplified_df

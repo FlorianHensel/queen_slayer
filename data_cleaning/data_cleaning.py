@@ -1,36 +1,55 @@
 from eval_extractor import EvalExtractor
 from pgn_to_fen import PGNConverter
 from fen_eval_matcher import DatasetCreator
+from os import listdir
+from os.path import isfile, join
 
+path = 'pgns/'
+pgns = [f for f in listdir(path) if isfile(join(path, f))]
 GAMES_TO_READ = None
-filepath = 'evals.pgn'
 
-# CREATE FENS FROM GAMES
-converter = PGNConverter()
-converter.read_pgn(filepath,
-                   encoding='square_list',
-                   games_to_read=GAMES_TO_READ,
-                   qcm_to_flag=3)
+############# VERSION 3.0 #############
+pgn_counter = 1
+for pgn in pgns:
+    filepath = f'{path}{pgn}'
 
-# GET EVALUATIONS
-eval_extractor = EvalExtractor()
-eval_extractor.read_pgn(filepath, games_to_read=GAMES_TO_READ)
+    # CREATE FENS FROM GAMES
+    converter = PGNConverter()
+    converter.read_pgn(filepath,
+                    encoding='square_list',
+                    games_to_read=GAMES_TO_READ,
+                    qcm_to_flag=3,
+                    log=True)
 
-# MATCH EVALS TO FENS
-dataset_creator = DatasetCreator(fens=converter.games, evals=eval_extractor.evals)
-dataset_creator.match_fen_to_eval()
+    # GET EVALUATIONS
+    eval_extractor = EvalExtractor()
+    eval_extractor.read_pgn(filepath, games_to_read=GAMES_TO_READ, log=True)
 
-# CREATE DATASET
-dataset_creator.create_dataset(dropna=False, drop_duplicates=False)
+    # MATCH EVALS TO FENS
+    dataset_creator = DatasetCreator()
+    dataset_creator.match_fen_to_eval(fens=converter.games, evals=eval_extractor.evals)
 
-# EMPOWER QUEEN CAPTURE POSITIONS
-amplifiers = {
-    'main': 10,
-    '-1': 5,
-    '-2': 3,
-    '-3': 1.5
-}
-df = dataset_creator.amplify_queen_capture_positions(amplifiers=amplifiers,
-                                                     amplifier_type='addition',
-                                                     keep_qcm=False)
-df.to_csv('train_data.csv', index=False)
+    # CREATE DATASET
+    dataset_creator.create_dataset(dropna=True, drop_duplicates=True)
+
+    # EMPOWER QUEEN CAPTURE POSITIONS
+    amplifiers = {
+        'main': 10,
+        '-1': 5,
+        '-2': 3,
+        '-3': 1.5
+    }
+    df = dataset_creator.amplify_queen_capture_positions(amplifiers=amplifiers,
+                                                        amplifier_type='addition',
+                                                        keep_qcm=False,
+                                                        evals_cap=[-15, 15])
+
+    # WRITE TRAIN SET TO CSV
+    print('Exporting to csv.')
+    if pgn_counter == 1:
+        df.to_csv('train_data.csv', index=False)
+    else:
+        df.to_csv('train_data.csv', index=False, mode='a', header=False)
+
+    print(f'\n####### {int(pgn_counter / len(pgns) * 100)}% #######\n')
+    pgn_counter += 1

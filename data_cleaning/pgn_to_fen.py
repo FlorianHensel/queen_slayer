@@ -1,4 +1,5 @@
 import chess.pgn
+import datetime as dt
 
 class PGNConverter():
     '''
@@ -8,7 +9,11 @@ class PGNConverter():
         self.games = {}
 
 
-    def read_pgn(self, filename=str, games_to_read=None, encoding=str, qcm_to_flag=1):
+    def read_pgn(self, filename=str,
+                 games_to_read=None,
+                 encoding=str,
+                 qcm_to_flag=1,
+                 log=True):
         '''
         Reads pgn file and creates FENs for each position in a game.\n
         Stored in self.games
@@ -18,7 +23,7 @@ class PGNConverter():
         that need to be flagged.
         '''
 
-        print("-------------------\nPGN CONVERTER\n-------------------\nClearing previous games.\nReading PGN...")
+        print("-------------------\nPGN CONVERTER\n-------------------\nClearing previous games.")
         self.games = {}
 
 
@@ -66,31 +71,24 @@ class PGNConverter():
 
                 # ENCODE EMPTY FIELDS
                 board_str = board_str.replace('.', '0')
-
                 # ENCODE ROOKS
                 board_str = board_str.replace('r', '-5')
                 board_str = board_str.replace('R', '5')
-
                 # ENCODE PAWNS
                 board_str = board_str.replace('p', '-1')
                 board_str = board_str.replace('P', '1')
-
                 # ENCODE KNIGHTS
                 board_str = board_str.replace('n', '-2.9')
                 board_str = board_str.replace('N', '2.9')
-
                 # ENCODE BISHOPS
                 board_str = board_str.replace('b', '-3')
                 board_str = board_str.replace('B', '3')
-
                 # ENCODE QUEENS
                 board_str = board_str.replace('q', '-9')
                 board_str = board_str.replace('Q', '9')
-
                 # ENCODE KINGS
                 board_str = board_str.replace('k', '-1.5')
                 board_str = board_str.replace('K', '1.5')
-
                 # REMOVE LINEBREAKS
                 board_str = board_str.replace('\n', ' ')
 
@@ -152,8 +150,10 @@ class PGNConverter():
                 fen_counter += 1
 
             # LABEL THE LAST GAME POSITION WITH QUEEN CAPTURE POSSIBILITY
-            fens[-1].insert(0, False)
-
+            try:
+                fens[-1].insert(0, False)
+            except:
+                pass
             self.games[current_game] = fens
 
             # RETURN TRUE IF GAME AVAILABLE
@@ -163,15 +163,34 @@ class PGNConverter():
         with open(filename) as pgn:
             # IF NO VALUE IS GIVEN FOR GAMES TO READ, READ ALL GAMES
             if games_to_read == None:
+                if log:
+                    print('Reading all games...')
                 game_counter = 1
                 games_available = True
                 while games_available:
                     games_available = convert_game_to_fens(pgn, game_counter)
                     game_counter += 1
 
+                    if log:
+                        if game_counter % 1000 == 0:
+                            now = dt.datetime.now().strftime("%H:%M:%S")
+                            print(f'{now} | processed {game_counter} games...')
+
+
             # IF VALUE IS GIVEN FOR GAMES TO READ, READ N GAMES
             else:
+                if log:
+                    print(f'Reading {games_to_read} games...')
+                game_counter = 1
+
                 for game_number in range (1, games_to_read + 1):
                     convert_game_to_fens(pgn, game_number)
+                    game_counter += 1
+
+                    # LOG EVERY THOUSAND GAMES
+                    if log:
+                        if game_counter % 1000 == 0:
+                            now = dt.datetime.now().strftime("%H:%M:%S")
+                            print(f'{now} | processed {game_counter} games...')
 
         print(f"Added {len(self.games)} games.\n")

@@ -7,3 +7,5 @@ raw_data/
 **/__pycache__/
 .env
 data_cleaning/data/
+data_cleaning/lichess_db_standard_rated_2014-06.pgn
+data_cleaning/train_data.csv

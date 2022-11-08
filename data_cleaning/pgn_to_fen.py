@@ -71,31 +71,24 @@ class PGNConverter():
 
                 # ENCODE EMPTY FIELDS
                 board_str = board_str.replace('.', '0')
-
                 # ENCODE ROOKS
                 board_str = board_str.replace('r', '-5')
                 board_str = board_str.replace('R', '5')
-
                 # ENCODE PAWNS
                 board_str = board_str.replace('p', '-1')
                 board_str = board_str.replace('P', '1')
-
                 # ENCODE KNIGHTS
                 board_str = board_str.replace('n', '-2.9')
                 board_str = board_str.replace('N', '2.9')
-
                 # ENCODE BISHOPS
                 board_str = board_str.replace('b', '-3')
                 board_str = board_str.replace('B', '3')
-
                 # ENCODE QUEENS
                 board_str = board_str.replace('q', '-9')
                 board_str = board_str.replace('Q', '9')
-
                 # ENCODE KINGS
                 board_str = board_str.replace('k', '-1.5')
                 board_str = board_str.replace('K', '1.5')
-
                 # REMOVE LINEBREAKS
                 board_str = board_str.replace('\n', ' ')
 
@@ -157,8 +150,10 @@ class PGNConverter():
                 fen_counter += 1
 
             # LABEL THE LAST GAME POSITION WITH QUEEN CAPTURE POSSIBILITY
-            fens[-1].insert(0, False)
-
+            try:
+                fens[-1].insert(0, False)
+            except:
+                pass
             self.games[current_game] = fens
 
             # RETURN TRUE IF GAME AVAILABLE

@@ -68,4 +68,7 @@ class EvalExtractor():
                 print(f'Reading {games_to_read} games...')
             find_evals(games[:games_to_read])
 
-        print(f"Added {len(self.evals)} games.\n")
+        num_eval_games = len([1 for game, evals in self.evals.items()
+                          if len(evals) > 0])
+
+        print(f"Added {len(self.evals)} games.\nThereof evaluated games: {num_eval_games}\n")

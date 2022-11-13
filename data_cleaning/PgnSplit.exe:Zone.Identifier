@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://github.com/cyanfish/pgnsplit
+HostUrl=https://objects.githubusercontent.com/github-production-release-asset-2e65be/95052250/4beb83c0-9817-11e7-9bc1-b82d5b6a787a?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221105%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221105T111431Z&X-Amz-Expires=300&X-Amz-Signature=b8889c6f36a9acc409c2d3c242d5f37125a194d794f4ec543d67c2838555f25f&X-Amz-SignedHeaders=host&actor_id=97818897&key_id=0&repo_id=95052250&response-content-disposition=attachment%3B%20filename%3DPgnSplit.exe&response-content-type=application%2Foctet-stream

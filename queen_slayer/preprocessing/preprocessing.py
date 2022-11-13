@@ -1,11 +1,11 @@
-import chess
+import chess.pgn
 
 class Preprocessing():
     '''
     Takes care of encodig FENs.
     '''
 
-    def encode_fen(board, encoding=str):
+    def encode_fen(board=chess.pgn.Game, encoding=str):
         '''
         Returns encoded FEN
         '''

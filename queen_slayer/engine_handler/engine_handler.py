@@ -1,5 +1,6 @@
 import chess
 from preprocessing.preprocessing import Preprocessing
+import tensorflow as tf
 
 class EngineHandler():
     '''
@@ -10,7 +11,7 @@ class EngineHandler():
         self.model = model
 
 
-    def predict_move(self, board, depth=1):
+    def predict_move(self, board=chess.Board, depth=1):
         '''
         Predicts best move.
         '''
@@ -36,8 +37,16 @@ class EngineHandler():
         ranked_moves = {move: eval for move, eval in sorted(evaluated_moves.items(),
                                                             key=lambda item: item[1])}
 
-        # PLAY BEST MOVE
-        self.make_move(ranked_moves[0])
-
-        # RETURN MOVE TO VISUALIZE ON BOARD
+        # RETURN BEST MOVE
         return ranked_moves[0]
+
+
+# LOAD MODEL
+with open('model/model2.json', 'r') as file:
+    model_json = file.read()
+
+model = tf.keras.models.model_from_json(model_json)
+model.load_weights('model/model2.h5')
+engine_handler = EngineHandler(model)
+board = chess.Board()
+best_move = engine_handler.predict_move(board=board)

@@ -8,7 +8,6 @@ class EngineHandler():
 
     def __init__(self, model):
         self.model = model
-        self.board = chess.Board()
 
 
     def make_move(self, move):
@@ -18,20 +17,19 @@ class EngineHandler():
         self.board.push(move)
 
 
-    def predict_move(self, depth=1):
+    def predict_move(self, board, depth=1):
         '''
         Predicts best move.
         '''
 
         # GET LEGAL MOVES (AS UCI)
-        legal_moves = [str(i) for i in list(self.board.legal_moves)]
+        legal_moves = [str(i) for i in list(board.legal_moves)]
 
         # PREDICT EVALS FOR EACH LEGAL MOVE
         evaluated_moves = {}
         for move in legal_moves:
 
             # CREATE COPY OF BOARD AND PUSH MOVE
-            board = self.board
             board.push_uci(move)
 
             # CREATE AND ENCODE FEN

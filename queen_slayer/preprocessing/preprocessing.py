@@ -49,4 +49,12 @@ class Preprocessing():
             board_list = board_str.split(' ')
             fen = [float(i) for i in board_list]
 
+            # CHECKING WHICH SIDE NEEDS TO PLAY
+            if board.turn == True:
+                side_to_play = 1
+            else:
+                side_to_play = -1
+
+            fen.insert(0, side_to_play)
+
         return fen

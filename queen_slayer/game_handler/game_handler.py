@@ -1,20 +1,21 @@
 import chess
 from engine_handler.engine_handler import EngineHandler
 
-class GameHandler(EngineHandler):
-    '''
-    Takes care of game flow.\n
-    Communicates with EngineHandler to get AI's move.
-    '''
-    def __init__(self, model) -> None:
-        super().__init__(model)
-        self.board = chess.Board()
+engine_handler = EngineHandler('model/model2.json', 'model/model2.h5')
+board = chess.Board()
 
+print("\n\n########## GAME START ##########\n")
+print(board)
 
-    def start_game(self):
-        pass
+while __name__ == '__main__':
 
+    print("\n########## USER TURN ##########\n")
+    user_move = input("Please input a move: ")
+    print('\n')
+    board.push_uci(user_move)
+    print(board)
 
-
-if __name__ == '__main__':
-    GameHandler(model='model').start_game()
+    print("\n########## AI TURN ##########\n")
+    best_move = engine_handler.predict_move(board=board)
+    board.push_uci(best_move)
+    print(board)

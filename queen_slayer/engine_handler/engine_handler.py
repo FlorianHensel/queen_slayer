@@ -10,13 +10,6 @@ class EngineHandler():
         self.model = model
 
 
-    def make_move(self, move):
-        '''
-        Pushes move on self.board.
-        '''
-        self.board.push(move)
-
-
     def predict_move(self, board, depth=1):
         '''
         Predicts best move.

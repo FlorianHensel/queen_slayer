@@ -63,8 +63,10 @@ class EngineHandler():
 
         # RETURN BEST MOVE IF AI IS WHITE
         if side_to_play == 1:
-            return list(ranked_moves.keys())[-1]
+            best_move = list(ranked_moves.keys())[-1]
+            return best_move, ranked_moves[best_move]
 
         # RETURN BEST MOVE IF AI IS BLACK
         else:
-            return list(ranked_moves.keys())[0]
+            best_move = list(ranked_moves.keys())[0]
+            return best_move, ranked_moves[best_move]

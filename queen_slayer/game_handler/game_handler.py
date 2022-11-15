@@ -1,7 +1,7 @@
 import chess
 from engine_handler.engine_handler import EngineHandler
 
-engine_handler = EngineHandler('model/model2.json', 'model/model2.h5')
+engine_handler = EngineHandler('model/model3.json', 'model/model3.h5')
 board = chess.Board()
 
 print("\n\n########## GAME START ##########\n")

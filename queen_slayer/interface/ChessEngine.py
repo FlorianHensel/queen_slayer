@@ -44,6 +44,8 @@ class GameState:
         Takes a Move as a parameter and executes it.
         (this will not work for castling, pawn promotion and en-passant)
         """
+        #move = [Move((6,4), (4,4), self.board)] # Julio adding line as for video 3, min 29:13, Testing for hard coding movement
+        
         self.board[move.start_row][move.start_col] = "--"
         self.board[move.end_row][move.end_col] = move.piece_moved
         self.move_log.append(move)  # log the move so we can undo it later
@@ -223,6 +225,8 @@ class GameState:
             self.stalemate = False
 
         self.current_castling_rights = temp_castle_rights
+        # print(move.getChessNotation()) -- Print causes error as moves is not defined --- Julio
+        # print(f'hello moves being done, {moves}') # Julio adding print 
         return moves
 
     def inCheck(self):
@@ -251,6 +255,9 @@ class GameState:
         All moves without considering checks.
         """
         moves = []
+        #moves = [Move((6,4), (4,4), self.board)] # Julio adding line as for video 3, min 29:13, Testing for hard coding movement
+        #the line didn't work and will try setting it on a different place
+        #print(moves)  -- Julio adding print line
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
                 turn = self.board[row][col][0]
@@ -572,14 +579,24 @@ class Move:
     files_to_cols = {"a": 0, "b": 1, "c": 2, "d": 3,
                      "e": 4, "f": 5, "g": 6, "h": 7}
     cols_to_files = {v: k for k, v in files_to_cols.items()}
+    #test_list = [[0,1,2,3,4,5,6],
+     #            [0,1,2,3,4,5,6],
+                # ]
 
     def __init__(self, start_square, end_square, board, is_enpassant_move=False, is_castle_move=False):
-        self.start_row = start_square[0]
-        self.start_col = start_square[1]
-        self.end_row = end_square[0]
-        self.end_col = end_square[1]
+        # if you hard code these lines at first, it will play one movement and then brakes.
+        # you need to add other lines at the end in order for not to brake.
+        self.start_row = start_square[0] # 6 --- Harcoding the moves, Julio.
+        self.start_col = start_square[1] # 4 --- Harcoding the moves, Julio.
+        self.end_row = end_square[0] # 4 --- Harcoding the moves, Julio.
+        self.end_col = end_square[1] # 4 --- Harcoding the moves, Julio.
+        # print(f"{self.start_row}{self.start_col} {self.end_row} {self.end_col}") -- Julio adding print, not what we need
         self.piece_moved = board[self.start_row][self.start_col]
         self.piece_captured = board[self.end_row][self.end_col]
+        #print(f'{self.piece_moved}')
+        #print('hello')   these variables only print the board but not the moves, Julio
+        #print(f'{self.piece_captured}')
+        
         # pawn promotion
         self.is_pawn_promotion = (self.piece_moved == "wp" and self.end_row == 0) or (
                 self.piece_moved == "bp" and self.end_row == 7)
@@ -592,6 +609,13 @@ class Move:
 
         self.is_capture = self.piece_captured != "--"
         self.moveID = self.start_row * 1000 + self.start_col * 100 + self.end_row * 10 + self.end_col
+        # print(self.moveID) -- Julio not the value I need for the moves
+        
+        #With these lines, it will not brake
+        #self.start_row = 1 #start_square[0] # 1 --- Harcoding the moves, Julio.
+        #self.start_col = 4 #start_square[1] # 4 --- Harcoding the moves, Julio.
+        #self.end_row = 3 #end_square[0] # 3 --- Harcoding the moves, Julio.
+        #self.end_col = 4
 
     def __eq__(self, other):
         """
@@ -644,4 +668,5 @@ class Move:
         move_string = self.piece_moved[1]
         if self.is_capture:
             move_string += "x"
+            # print(move_string) -- Julio, nothing being printed
         return move_string + end_square

@@ -37,6 +37,7 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     game_state = ChessEngine.GameState()
+    #print(game_state) # Julio , first game_state
     valid_moves = game_state.getValidMoves()
     move_made = False  # flag variable for when a move is made
     animate = False  # flag variable for when we should animate a move
@@ -50,7 +51,7 @@ def main():
     move_finder_process = None
     move_log_font = p.font.SysFont("Arial", 14, False, False)
     player_one = True  # if a human is playing white, then this will be True, else False
-    player_two = False  # if a hyman is playing white, then this will be True, else False --- Changed to Trud from False,
+    player_two = True  # if a hyman is playing white, then this will be True, else False --- Changed to True from False,
     m = 1
     q = 0
     while running:
@@ -118,6 +119,7 @@ def main():
                 if e.key == p.K_r:  # reset the game when 'r' is pressed
                     game_state = ChessEngine.GameState()
                     valid_moves = game_state.getValidMoves()
+                    # print('Hello valid_moves') # Julio adding print
                     square_selected = ()
                     player_clicks = []
                     move_made = False
@@ -137,13 +139,38 @@ def main():
             if not ai_thinking:
                 ai_thinking = True
                 return_queue = Queue()  # used to pass data between threads
-                move_finder_process = Process(target=ChessAI.findBestMove, args=(game_state, valid_moves, return_queue))
+                # need to to read PGN/FEN call to the Online Model, then extract the start/end position and padd to the Process down below
+                #  ********
+                start_position = (1,4) #start_position_tuple
+                print(type(start_position))
+                end_position = (3, 4) # end_position_tuple
+                valid_moves2 = []
+                valid_moves2.append(ChessEngine.Move(start_position, end_position, game_state.board))
+                print("hello Neal") # Neal adding print
+                print(valid_moves2) # Neal adding print
+                print("hello Neal2") # Neal adding print
+                #start_position = (1,0)
+                #end_position = (2, 0)
+                #valid_moves2.append(ChessEngine.Move(start_position, end_position, game_state.board))
+                move_finder_process = Process(target=ChessAI.findBestMove, args=(game_state, valid_moves2, return_queue)) # original line, changing valid_move to valid_moves2
+                #valid_moves3 = []
+                #start_position = (1,0)
+                #end_position = (2, 0)
+                #valid_moves2.append(ChessEngine.Move(start_position2, end_position2, game_state.board))
+                # move_finder_process = Process(target=ChessAI.findBestMove, args=(game_state, valid_moves2, return_queue))
+                #  *****
+                # print(move_finder_process) -- Julio adding print
+                #move_finder_process = a3 #Process(target=ChessAI.findBestMove) #, args=(game_state, valid_moves, return_queue)) # julio modifying line
+                #print(valid_moves) # Julio addding print
                 move_finder_process.start()
+                print(valid_moves) # Julio adding print
+                print(game_state) # --- Julio adding print
+                print(return_queue) # --- Julio adding print
 
             if not move_finder_process.is_alive():
                 ai_move = return_queue.get()
                 if ai_move is None:
-                    ai_move = ChessAI.findRandomMove(valid_moves)
+                    ai_move = ChessAI.findRandomMove(valid_moves2) #changing from valid_moves to valid_moves2 -- Julio/Nour
                 game_state.makeMove(ai_move)
                 move_made = True
                 animate = True
@@ -154,6 +181,8 @@ def main():
                 # print(game_state.move_log[-1]) # Julio adding print
                 animateMove(game_state.move_log[-1], screen, game_state.board, clock)
             valid_moves = game_state.getValidMoves()
+            print('Hello valid moves on AI') # Julio adding print
+            # print(valid_moves) # -- Juio adding print
             move_made = False
             animate = False
             move_undone = False
@@ -248,7 +277,7 @@ def drawMoveLog(screen, game_state, font, next_best_move):
     move_log_rect = p.Rect(BOARD_WIDTH, 0, MOVE_LOG_PANEL_WIDTH, MOVE_LOG_PANEL_HEIGHT)
     p.draw.rect(screen, p.Color('black'), move_log_rect)
     move_log = game_state.move_log
-    #print(str(move_log[-1])) # Julio adding print
+    #print(str(move_log)) # Julio adding print
     move_texts = []
     for i in range(0, len(move_log), 2):
         move_string = str(i // 2 + 1) + '. ' + str(move_log[i]) + " "

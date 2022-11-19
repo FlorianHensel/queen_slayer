@@ -4,7 +4,7 @@ from fen_eval_matcher import DatasetCreator
 from os import listdir
 from os.path import isfile, join
 
-path = 'pgns/'
+path = 'data/splitted/'
 pgns = [f for f in listdir(path) if isfile(join(path, f))]
 GAMES_TO_READ = None
 
@@ -30,7 +30,7 @@ for pgn in pgns:
     dataset_creator.match_fen_to_eval(fens=converter.games, evals=eval_extractor.evals)
 
     # CREATE DATASET
-    dataset_creator.create_dataset(dropna=True, drop_duplicates=True)
+    dataset_creator.create_dataset(dropna=True, drop_duplicates=False)
 
     # EMPOWER QUEEN CAPTURE POSITIONS
     amplifiers = {

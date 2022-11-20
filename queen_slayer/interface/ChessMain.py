@@ -5,7 +5,7 @@ Displaying current GameStatus object.
 """
 import pygame as p
 import ChessEngine, ChessAI
-import sys
+from model_move import uci_to_num, num_to_uci
 from multiprocessing import Process, Queue
 
 BOARD_WIDTH = BOARD_HEIGHT = 512
@@ -51,7 +51,7 @@ def main():
     move_finder_process = None
     move_log_font = p.font.SysFont("Arial", 14, False, False)
     player_one = True  # if a human is playing white, then this will be True, else False
-    player_two = True  # if a hyman is playing white, then this will be True, else False --- Changed to True from False,
+    player_two = False  # if a hyman is playing white, then this will be True, else False --- Changed to True from False,
     m = 1
     q = 0
     while running:
@@ -72,14 +72,20 @@ def main():
                     else:
                         square_selected = (row, col)
                         player_clicks.append(square_selected)  # append for both 1st and 2nd click
+                        print(player_clicks) # Julio adding print
                     if len(player_clicks) == 2 and human_turn:  # after 2nd click
                         move = ChessEngine.Move(player_clicks[0], player_clicks[1], game_state.board)
-                        #print(move) # Julio adding print 
+                        print('before') # Julio adding print
+                        print(move) # Julio adding print 
+                        print("after") # Julio adding print
                         for i in range(len(valid_moves)):
                             if move == valid_moves[i]:
                                 game_state.makeMove(valid_moves[i])
                                 move_made = True
                                 animate = True
+                                print("first") # Julio adding print
+                                print(player_clicks)  # Julio adding print
+                                print("last")  # Julio adding print
                                 square_selected = ()  # reset user clicks
                                 player_clicks = []
                                 f = open('/home/piche-traful/code/Chessinterface3/chess-engine-master/chess/movedpieces2.pgn','a') # Julio adding code to save to a file
@@ -97,7 +103,7 @@ def main():
                                 #f.write(str(move.getChessNotation())+' ') # Julio
                                 #f.close() # Julio
                                 
-                                print(move.getChessNotation()) #Julio adding print---- Better print out
+                                #print(move.getChessNotation()) #Julio adding print---- Better print out
                                 #print('hello')
                                 m = (m + 1 - q)
                                 f.close()   
@@ -141,14 +147,17 @@ def main():
                 return_queue = Queue()  # used to pass data between threads
                 # need to to read PGN/FEN call to the Online Model, then extract the start/end position and padd to the Process down below
                 #  ********
-                start_position = (1,4) #start_position_tuple
-                print(type(start_position))
-                end_position = (3, 4) # end_position_tuple
+                start_position, end_position = uci_to_num("g7g6")
+                #start_position = (1,4) #start_position_tuple
+                #print(start_position)
+                #end_position = model_move("g7g6")[1]
+                #print(end_position)
+                #end_position = (3, 4) # end_position_tuple
                 valid_moves2 = []
                 valid_moves2.append(ChessEngine.Move(start_position, end_position, game_state.board))
-                print("hello Neal") # Neal adding print
-                print(valid_moves2) # Neal adding print
-                print("hello Neal2") # Neal adding print
+                #print("hello Neal") # Neal adding print
+                # print(valid_moves2) # Neal adding print
+                # print("hello Neal2") # Neal adding print
                 #start_position = (1,0)
                 #end_position = (2, 0)
                 #valid_moves2.append(ChessEngine.Move(start_position, end_position, game_state.board))
@@ -181,7 +190,7 @@ def main():
                 # print(game_state.move_log[-1]) # Julio adding print
                 animateMove(game_state.move_log[-1], screen, game_state.board, clock)
             valid_moves = game_state.getValidMoves()
-            print('Hello valid moves on AI') # Julio adding print
+            #print('Hello valid moves on AI') # Julio adding print
             # print(valid_moves) # -- Juio adding print
             move_made = False
             animate = False

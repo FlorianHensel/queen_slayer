@@ -1,5 +1,5 @@
 import chess
-from preprocessing.preprocessing import Preprocessing
+from preprocessing import Preprocessing
 import tensorflow as tf
 
 class EngineHandler():

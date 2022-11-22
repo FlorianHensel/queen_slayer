@@ -324,6 +324,24 @@ def main(WIN, WIDTH):
                             moves += 1
                             move_uci = move_to_uci(col, row, y, x)
                             gamestate.push_uci(move_uci)
+
+                            # CHECK FOR CASTLING MOVES
+                            try:
+                                if move_uci == 'e1g1' and board[x][y].type == 'k':
+                                    board[7][5] = board[7][7]
+                                    board[7][7] = '  '
+                                    do_move((7, 7), (5, 7))
+                            except:
+                                pass
+
+                            try:
+                                if move_uci == 'e1c1' and board[x][y].type == 'k':
+                                    board[7][3] = board[7][0]
+                                    board[7][0] = '  '
+                                    do_move((0, 7), (3, 7))
+                            except:
+                                pass
+
                             player_made_move = True
                         else:
                             deselect()
@@ -340,6 +358,24 @@ def main(WIN, WIDTH):
                             moves += 1
                             move_uci = move_to_uci(col, row, y, x)
                             gamestate.push_uci(move_uci)
+
+                            # CHECK FOR CASTLING MOVES
+                            try:
+                                if move_uci == 'e1g1' and board[x][y].type == 'k':
+                                    board[7][5] = board[7][7]
+                                    board[7][7] = '  '
+                                    do_move((7, 7), (5, 7))
+                            except:
+                                pass
+
+                            try:
+                                if move_uci == 'e1c1' and board[x][y].type == 'k':
+                                    board[7][3] = board[7][0]
+                                    board[7][0] = '  '
+                                    do_move((0, 7), (3, 7))
+                            except:
+                                pass
+
                             player_made_move = True
                         else:
                             deselect()
@@ -358,6 +394,23 @@ def main(WIN, WIDTH):
                 board[row][col] = '  '
                 do_move((col, row), (y, x))
                 moves += 1
+
+                # CHECK FOR CASTLING MOVES
+                try:
+                    if move_uci == 'e8g8' and board[x][y].type == 'k':
+                        board[0][5] = board[0][7]
+                        board[0][7] = '  '
+                        do_move((7, 0), (5, 0))
+                except:
+                    pass
+
+                try:
+                    if move_uci == 'e8c8' and board[x][y].type == 'k':
+                        board[0][3] = board[0][0]
+                        board[0][0] = '  '
+                        do_move((7, 0), (3, 0))
+                except:
+                    pass
 
                 update_display(WIN, grid, 8, WIDTH)
 

@@ -4,7 +4,7 @@ from fen_eval_matcher import DatasetCreator
 from os import listdir
 from os.path import isfile, join
 
-path = 'pgns/'
+path = 'data/splitted/'
 pgns = [f for f in listdir(path) if isfile(join(path, f))]
 GAMES_TO_READ = None
 

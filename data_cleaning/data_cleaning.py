@@ -34,10 +34,10 @@ for pgn in pgns:
 
     # EMPOWER QUEEN CAPTURE POSITIONS
     amplifiers = {
-        'main': 10,
-        '-1': 5,
-        '-2': 3,
-        '-3': 1.5
+        'main': 0,
+        '-1': 0,
+        '-2': 0,
+        '-3': 0
     }
     df = dataset_creator.amplify_queen_capture_positions(amplifiers=amplifiers,
                                                         amplifier_type='addition',

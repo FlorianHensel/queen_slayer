@@ -1,5 +1,6 @@
 import chess.pgn
 import datetime as dt
+import regex as re
 
 class PGNConverter():
     '''
@@ -114,7 +115,7 @@ class PGNConverter():
             current_game = f'game_{str(game_number)}'
             fens = []
             fen_counter = 0
-
+            move_counter = 1
             for move in game.mainline_moves():
 
                 # DETERMINE QUEEN CAPTURE MOVE & MAKE MOVE
@@ -132,6 +133,37 @@ class PGNConverter():
                 # ENCODE FEN AND ADD SIDE TO PLAY
                 fen = encode_fen(board=board, encoding=encoding)
                 fen.insert(0, side_to_play)
+
+                # ADD MOVE COUNTER
+                fen.insert(0, move_counter)
+                move_counter += 1
+
+                # ADD POINT TRACKER
+                fen_points = re.findall('(.*)(b|w)', fen_after)[0][0]
+
+                # WHITE POINTS
+                w_pawn = fen_points.count('P')
+                w_rook = fen_points.count('R') * 5
+                w_bishop = fen_points.count('B') * 3
+                w_knight = fen_points.count('N') * 3
+                w_queen = fen_points.count('Q') * 9
+                w_points = w_pawn + w_rook + w_bishop + w_knight + w_queen
+
+                # BLACK POINTS
+                b_pawn = fen_points.count('p')
+                b_rook = fen_points.count('r') * 5
+                b_bishop = fen_points.count('b') * 3
+                b_knight = fen_points.count('n') * 3
+                b_queen = fen_points.count('q') * 9
+                b_points = b_pawn + b_rook + b_bishop + b_knight + b_queen
+
+                # CALCULATE POINT TRACKER
+                if side_to_play == 1:
+                    point_tracker = w_points - b_points
+                else:
+                    point_tracker = b_points - w_points
+
+                fen.insert(0, point_tracker)
                 fens.append(fen)
 
                 # FLAG FEN IF QUEEN CAPTURED

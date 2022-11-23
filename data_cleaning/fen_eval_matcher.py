@@ -47,13 +47,12 @@ class DatasetCreator():
         print('Creating dataset.')
         # GET NUMBER OF FEATURES BASED ON FEN ENCODING
         feature_count = max([len(i) for i in self.evaluated_positions])
-        columns = [f"feat_{i}" for i in range(1, feature_count - 2)]
+        columns = [f"feat_{i}" for i in range(1, feature_count - 4)]
 
-        # QUEEN CAPTURE MOVES ALWAYS RECORDED IN FIRST COLUMN
         columns.insert(0, 'QCM')
-        # SIDE TO PLAY ALWAYS RECORDED IN SECOND COLUMN
-        columns.insert(1, 'side_to_play')
-        # EVALS ALWAYS RECORDED ON LAST COLUMN
+        columns.insert(1, 'point_tracker')
+        columns.insert(2, 'move_counter')
+        columns.insert(3, 'side_to_play')
         columns.append('eval')
 
         df = pd.DataFrame(self.evaluated_positions, columns=columns)

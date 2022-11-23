@@ -97,8 +97,8 @@ def deselect():
 
 def select_moves(index, moves):
     '''
-    This takes in a piece object and its index 
-    then checks where that piece can move using 
+    This takes in a piece object and its index
+    then checks where that piece can move using
     separately defined functions for each type of piece.
     '''
     def index_to_uci(index):
@@ -127,9 +127,9 @@ def select_moves(index, moves):
             else:
                 if board[move[0]][move[1]] == '  ':
                     board[move[0]][move[1]] = 'x '
-        
+
         return board
-    
+
 
     def check_team(moves, index):
         row, col = index
@@ -387,7 +387,8 @@ def main(WIN, WIDTH):
 
             # ENGINE MOVE
             if player_made_move:
-                best_move, eval = engine_handler.predict_move(board=gamestate)
+                best_move, eval = engine_handler.predict_move(board=gamestate,
+                                                              move_counter=moves)
                 gamestate.push_uci(best_move)
                 col, row, y, x = uci_to_move(best_move)
                 board[x][y] = board[row][col]

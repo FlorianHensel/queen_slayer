@@ -22,7 +22,7 @@ class EngineHandler():
         self.model = model
 
 
-    def predict_move(self, board=chess.Board, move_counter=int):
+    def predict_move(self, move_counter, board=chess.Board):
         '''
         Returns pest move in UCI format.
         '''
@@ -45,9 +45,7 @@ class EngineHandler():
                 board.push_uci(move)
 
                 # CREATE AND ENCODE FEN
-                fen_encoded = [Preprocessing.encode_fen(board=board,
-                                                        encoding='square_list',
-                                                        move_counter=move_counter)]
+                fen_encoded = [Preprocessing.encode_fen(board=board, encoding='square_list', move_counter=move_counter)]
                 eval = self.model.predict(fen_encoded, verbose=0)[0][0]
 
                 # STORE MOVE AND EVAL

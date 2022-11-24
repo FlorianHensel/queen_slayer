@@ -3,7 +3,7 @@ import sys
 import chess
 from engine_handler import EngineHandler
 
-engine_handler = EngineHandler('model/model3.json', 'model/model3.h5')
+engine_handler = EngineHandler('model/model.json', 'model/model.h5')
 gamestate = chess.Board()
 board = [['  ' for i in range(8)] for i in range(8)]
 
@@ -282,6 +282,7 @@ def uci_to_move(uci):
 
 
 create_board(board)
+pygame.display.set_caption('Queen Slayer')
 
 def main(WIN, WIDTH):
     moves = 0

@@ -6,7 +6,7 @@ class Preprocessing():
     Takes care of encodig FENs.
     '''
 
-    def encode_fen(board=chess.pgn.Game, encoding=str, move_counter=int):
+    def encode_fen(board, encoding, move_counter):
         '''
         Returns encoded FEN
         '''

@@ -72,24 +72,24 @@ class PGNConverter():
 
                 # ENCODE EMPTY FIELDS
                 board_str = board_str.replace('.', '0')
-                # ENCODE ROOKS
-                board_str = board_str.replace('r', '-5')
-                board_str = board_str.replace('R', '5')
                 # ENCODE PAWNS
                 board_str = board_str.replace('p', '-1')
                 board_str = board_str.replace('P', '1')
                 # ENCODE KNIGHTS
-                board_str = board_str.replace('n', '-2.9')
-                board_str = board_str.replace('N', '2.9')
+                board_str = board_str.replace('n', '-2')
+                board_str = board_str.replace('N', '2')
                 # ENCODE BISHOPS
                 board_str = board_str.replace('b', '-3')
                 board_str = board_str.replace('B', '3')
+                # ENCODE ROOKS
+                board_str = board_str.replace('r', '-4')
+                board_str = board_str.replace('R', '4')
                 # ENCODE QUEENS
-                board_str = board_str.replace('q', '-9')
-                board_str = board_str.replace('Q', '9')
+                board_str = board_str.replace('q', '-5')
+                board_str = board_str.replace('Q', '5')
                 # ENCODE KINGS
-                board_str = board_str.replace('k', '-1.5')
-                board_str = board_str.replace('K', '1.5')
+                board_str = board_str.replace('k', '-6')
+                board_str = board_str.replace('K', '6')
                 # REMOVE LINEBREAKS
                 board_str = board_str.replace('\n', ' ')
 
@@ -143,18 +143,18 @@ class PGNConverter():
 
                 # WHITE POINTS
                 w_pawn = fen_points.count('P')
-                w_rook = fen_points.count('R') * 5
+                w_rook = fen_points.count('R') * 4
                 w_bishop = fen_points.count('B') * 3
-                w_knight = fen_points.count('N') * 3
-                w_queen = fen_points.count('Q') * 9
+                w_knight = fen_points.count('N') * 2
+                w_queen = fen_points.count('Q') * 5
                 w_points = w_pawn + w_rook + w_bishop + w_knight + w_queen
 
                 # BLACK POINTS
                 b_pawn = fen_points.count('p')
-                b_rook = fen_points.count('r') * 5
+                b_rook = fen_points.count('r') * 4
                 b_bishop = fen_points.count('b') * 3
-                b_knight = fen_points.count('n') * 3
-                b_queen = fen_points.count('q') * 9
+                b_knight = fen_points.count('n') * 2
+                b_queen = fen_points.count('q') * 5
                 b_points = b_pawn + b_rook + b_bishop + b_knight + b_queen
 
                 # CALCULATE POINT TRACKER
@@ -164,6 +164,8 @@ class PGNConverter():
                     point_tracker = b_points - w_points
 
                 fen.insert(0, point_tracker)
+
+                ####### APPEND FEN #######
                 fens.append(fen)
 
                 # FLAG FEN IF QUEEN CAPTURED

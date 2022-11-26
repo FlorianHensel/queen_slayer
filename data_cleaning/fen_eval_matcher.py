@@ -50,9 +50,9 @@ class DatasetCreator():
         columns = [f"feat_{i}" for i in range(1, feature_count - 4)]
 
         columns.insert(0, 'QCM')
-        columns.insert(1, 'point_tracker')
-        columns.insert(2, 'move_counter')
-        columns.insert(3, 'side_to_play')
+        columns.insert(2, 'point_tracker')
+        columns.insert(3, 'move_counter')
+        columns.insert(4, 'side_to_play')
         columns.append('eval')
 
         df = pd.DataFrame(self.evaluated_positions, columns=columns)

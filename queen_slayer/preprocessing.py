@@ -34,11 +34,11 @@ class Preprocessing():
             board_str = board_str.replace('p', '-1')
             board_str = board_str.replace('P', '1')
             # ENCODE KNIGHTS
-            board_str = board_str.replace('n', '-2.9')
-            board_str = board_str.replace('N', '2.9')
+            board_str = board_str.replace('n', '-3')
+            board_str = board_str.replace('N', '3')
             # ENCODE BISHOPS
-            board_str = board_str.replace('b', '-3')
-            board_str = board_str.replace('B', '3')
+            board_str = board_str.replace('b', '-4')
+            board_str = board_str.replace('B', '4')
             # ENCODE QUEENS
             board_str = board_str.replace('q', '-9')
             board_str = board_str.replace('Q', '9')
